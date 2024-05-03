@@ -123,6 +123,7 @@ get_nas_password() {
 
 # Mount NAS share
 mount_nas_share() {
+    apt-get install cifs-utils
     read -p "Enter the NAS IP address: " nas_ip
     read -p "Enter the NAS share name: " share_name
     read -p "Enter the NAS username: " nas_username
@@ -147,6 +148,7 @@ mount_nas_share() {
         echo "$fstab_entry" >> /etc/fstab
     fi
 
+    systemctl daemon-reload
     mount -a
     echo -e "${GREEN}NAS share mounted successfully${NC}"
 
