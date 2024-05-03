@@ -123,7 +123,14 @@ get_nas_password() {
 
 # Mount NAS share
 mount_nas_share() {
-    apt-get install cifs-utils
+     # Check if cifs-utils is installed, and install it if not
+    if ! dpkg -l cifs-utils >/dev/null 2>&1; then
+        echo -e "${GREEN}Installing cifs-utils...${NC}"
+        apt-get update >/dev/null 2>&1
+        apt-get install -y cifs-utils >/dev/null 2>&1
+        echo -e "${GREEN}cifs-utils installed.${NC}"
+    fi
+    
     read -p "Enter the NAS IP address: " nas_ip
     read -p "Enter the NAS share name: " share_name
     read -p "Enter the NAS username: " nas_username
@@ -148,9 +155,11 @@ mount_nas_share() {
         echo "$fstab_entry" >> /etc/fstab
     fi
 
-    systemctl daemon-reload
     mount -a
     echo -e "${GREEN}NAS share mounted successfully${NC}"
+
+    # Reload systemd daemon to apply changes
+    systemctl daemon-reload
 
     # Clean up password variable
     unset nas_password
