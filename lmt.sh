@@ -130,7 +130,7 @@ mount_nas_share() {
         apt-get install -y cifs-utils >/dev/null 2>&1
         echo -e "${GREEN}cifs-utils installed.${NC}"
     fi
-    
+
     read -p "Enter the NAS IP address: " nas_ip
     read -p "Enter the NAS share name: " share_name
     read -p "Enter the NAS username: " nas_username
