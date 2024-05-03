@@ -14,7 +14,9 @@ This script provides a comprehensive menu-driven interface for performing essent
    ./lmt.sh
    ```
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh | bash lmt.sh
+   curl -fsSL https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh
+   chmod +x lmt.sh
+   ./lmt.sh
    ```
 2. Follow the on-screen instructions to select and execute actions.
 
