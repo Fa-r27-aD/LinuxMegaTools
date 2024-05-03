@@ -206,40 +206,48 @@ setup_luks_encryption() {
         exit 1
     fi
 	
-	# Extract the device name from the path (e.g., 'nvme0n1p3' from '/dev/nvme0n1p3')
+    # Extract the device name from the path (e.g., 'nvme0n1p3' from '/dev/nvme0n1p3')
     device_name=$(basename $device_path)
 
-	# Securely create the directory for LUKS
+    if [[ $(lsb_release -is) == "Ubuntu" ]]; then
+        # Set device name to 'dm_crypt-0' for Ubuntu
+        device_name="dm_crypt-0"
+    else
+        # Set device name back to previous convention for Debian
+        device_name="${device_name}_crypt"
+    fi
+
+    # Securely create the directory for LUKS
     mkdir -p /etc/luks
     chmod 700 /etc/luks
 
-	# Securely create the key file and set permissions
+    # Securely create the key file and set permissions
     touch /etc/luks/system.key
     chmod 400 /etc/luks/system.key
     dd if=/dev/urandom of=/etc/luks/system.key bs=4096 count=1 iflag=fullblock
 
-	# Verify the key file
+    # Verify the key file
     echo -e "\nKey file created:"
     ls -l /etc/luks/system.key
 
-	# Add the key to the LUKS device
+    # Add the key to the LUKS device
     cryptsetup luksAddKey "$device_path" /etc/luks/system.key
 
-	# Install cryptsetup for initramfs
+    # Install cryptsetup for initramfs
     apt-get install -y cryptsetup-initramfs
 
-	# Configure the keyfile pattern
+    # Configure the keyfile pattern
     echo 'KEYFILE_PATTERN="/etc/luks/*.key"' | tee -a /etc/cryptsetup-initramfs/conf-hook > /dev/null
 	
-	# Set UMASK in initramfs.conf
+    # Set UMASK in initramfs.conf
     echo 'UMASK=0077' | tee -a /etc/initramfs-tools/initramfs.conf > /dev/null
 
-	# Clear existing entries in crypttab
+    # Clear existing entries in crypttab
     truncate --size 0 /etc/crypttab
 	
-	# Add entry to crypttab
+    # Add entry to crypttab
     uuid=$(blkid -s UUID -o value $device_path)
-    echo "${device_name}_crypt UUID=$uuid /etc/luks/system.key luks" | tee -a /etc/crypttab > /dev/null
+    echo "${device_name} UUID=$uuid /etc/luks/system.key luks" | tee -a /etc/crypttab > /dev/null
 
 	# Update initramfs
     update-initramfs -u -k all > /dev/null
