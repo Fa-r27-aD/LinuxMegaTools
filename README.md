@@ -9,10 +9,10 @@ This script provides a comprehensive menu-driven interface for performing essent
    sudo bash lmt.sh
    ```
       ```bash
-   wget -O- https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh) | bash lmt.sh
+   wget -O- https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh | bash lmt.sh
    ```
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh) | bash lmt.sh
+   curl -fsSL https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh | bash lmt.sh
    ```
 2. Follow the on-screen instructions to select and execute actions.
 
