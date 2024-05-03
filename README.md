@@ -8,8 +8,10 @@ This script provides a comprehensive menu-driven interface for performing essent
    ```bash
    sudo bash lmt.sh
    ```
-      ```bash
-   wget -O- https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh | bash lmt.sh
+   ```bash
+   wget -O lmt.sh https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh
+   chmod +x lmt.sh
+   ./lmt.sh
    ```
    ```bash
    curl -fsSL https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh | bash lmt.sh
