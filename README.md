@@ -6,7 +6,7 @@ This script provides a comprehensive menu-driven interface for performing essent
 
 1. Run the script as the root user:
    ```bash
-   sudo bash system_setup.sh
+   sudo bash lmt.sh
    ```
 2. Follow the on-screen instructions to select and execute actions.
 
