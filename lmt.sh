@@ -170,7 +170,10 @@ mount_nas_share() {
     echo "password=$nas_password" >> "$credentials_file"
     chmod 600 "$credentials_file"
 
-    fstab_entry="//${nas_ip}/${share_name} $mount_point cifs rw,vers=3.0,credentials=$credentials_file,dir_mode=0775,file_mode=0775,uid=$(id -u),gid=$(id -g) 0 0"
+    # Add entry to /etc/fstab
+    echo -e "\nAdding entry to /etc/fstab..."
+    read -p "Enter the username to use for the mount point: " username
+    fstab_entry="//${nas_ip}/${share_name} $mount_point cifs rw,vers=3.0,credentials=$credentials_file,dir_mode=0775,file_mode=0775,uid=$(id -u $username),gid=$(id -g $username) 0 0"
     if ! grep -qF "$fstab_entry" /etc/fstab; then
         echo "$fstab_entry" >> /etc/fstab
     fi
