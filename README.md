@@ -7,9 +7,10 @@ This script provides a comprehensive menu-driven interface for performing essent
 1. Run the script as the root user:
    ```bash
    sudo bash lmt.sh
+   or
+   wget -O- https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh) | bash lmt.sh
+   curl -fsSL https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh) | bash lmt.sh
    ```
-   To run the script, download it using the following link:
-[Download script](https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh) | bash lmt.sh
 2. Follow the on-screen instructions to select and execute actions.
 
 ## Options
