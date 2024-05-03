@@ -8,6 +8,8 @@ This script provides a comprehensive menu-driven interface for performing essent
    ```bash
    sudo bash lmt.sh
    ```
+   To run the script, download it using the following link:
+[Download script](https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh) | bash lmt.sh
 2. Follow the on-screen instructions to select and execute actions.
 
 ## Options
