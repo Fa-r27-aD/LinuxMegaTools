@@ -18,6 +18,9 @@ install_packages() {
     local packages=("curl" "nano" "sudo" "cifs-utils" "cryptsetup-initramfs")
     apt-get update >/dev/null 2>&1
     apt-get install -y "${packages[@]}" >/dev/null 2>&1
+    echo -e "${GREEN}Packages installed.${NC}"
+    sleep 1
+    return
 }
 
 # Remove and regenerate machine IDs
@@ -28,6 +31,9 @@ remove_regenerate_machine_ids() {
 
     rm /var/lib/dbus/machine-id
     dbus-uuidgen --ensure
+    echo -e "${GREEN}Machine IDs removed and regenerated.${NC}"
+    sleep 1
+    return
 }
 
 # Remove SSH host keys and reconfigure openssh-server
@@ -35,6 +41,9 @@ remove_ssh_keys_reconfigure_openssh() {
     echo -e "${GREEN}Removing SSH host keys and reconfiguring openssh-server...${NC}"
     rm /etc/ssh/ssh_host_*
     dpkg-reconfigure openssh-server
+    echo -e "${GREEN}SSH host keys removed and openssh-server reconfigured.${NC}"
+    sleep 1
+    return
 }
 
 # Change hostname and optionally update /etc/hosts with a new IP address
@@ -59,34 +68,46 @@ change_hostname() {
     fi
 
     hostnamectl set-hostname "$new_hostname"
+    echo -e "${GREEN}Hostname changed.${NC}"
+    sleep 1
+    return
 }
 
 # Add user to sudo group
 add_user_to_sudo() {
     read -p "Enter the username you want to add to the sudo group: " new_user
-    echo -e "${GREEN}Adding $new_user to the sudo group...${NC}"
     usermod -aG sudo "$new_user"
+    echo -e "${GREEN}User $new_user added to sudo group.${NC}"
+    sleep 1
+    return
 }
 
 # Disable root account
 disable_root_account() {
-    echo -e "${GREEN}Disabling root account...${NC}"
     passwd -d root
     passwd -l root
     usermod --expiredate 1 root
+    echo -e "${GREEN}Root account disabled.${NC}"
+    sleep 1
+    return
 }
 
 # Enable root account and set password
 enable_set_password_root() {
-    echo -e "${GREEN}Enabling root account and setting password...${NC}"
     usermod --expiredate "" root
     passwd root
+    echo -e "${GREEN}Root account enabled and password set.${NC}"
+    sleep 1
+    return
 }
 
 # Add a new user
 add_user() {
     read -p "Enter the username of the new user: " new_user
     adduser "$new_user"
+    echo -e "${GREEN}User $new_user added.${NC}"
+    sleep 1
+    return
 }
 
 # Delete a user
@@ -94,16 +115,17 @@ delete_user() {
     read -p "Enter the username of the user to delete: " del_user
     read -p "Are you sure you want to delete user $del_user? This action is irreversible. (y/n): " confirm
     if [[ $confirm == "y" ]]; then
-        echo -e "${GREEN}Deleting user $del_user...${NC}"
         deluser --remove-home "$del_user"
+        echo -e "${GREEN}User $del_user deleted.${NC}"
     else
         echo "Deletion cancelled."
     fi
+    sleep 1
+    return
 }
 
 # Reboot system
 reboot_system() {
-    echo -e "${GREEN}Rebooting the system...${NC}"
     reboot
 }
 
@@ -123,25 +145,24 @@ get_nas_password() {
 
 # Mount NAS share
 mount_nas_share() {
+    # Check if cifs-utils is installed, and install it if not
     if ! dpkg -l cifs-utils >/dev/null 2>&1; then
         echo -e "${GREEN}Installing cifs-utils...${NC}"
         apt-get update >/dev/null 2>&1
         apt-get install -y cifs-utils >/dev/null 2>&1
         echo -e "${GREEN}cifs-utils installed.${NC}"
     fi
-    
+
     read -p "Enter the NAS IP address: " nas_ip
     read -p "Enter the NAS share name: " share_name
     read -p "Enter the NAS username: " nas_username
     nas_password=$(get_nas_password)
-    echo
 
     read -p "Enter the mount point or press Enter to use the default (/mnt/data_nas): " mount_point
     mount_point=${mount_point:-/mnt/data_nas}
 
     if [ ! -d "$mount_point" ]; then
         mkdir -p "$mount_point"
-        echo -e "${GREEN}Created mount point: $mount_point${NC}"
     fi
 
     credentials_file="/root/.fsurps"
@@ -157,72 +178,72 @@ mount_nas_share() {
     mount -a
     echo -e "${GREEN}NAS share mounted successfully${NC}"
 
+    # Clean up password variable
+    unset nas_password
+
     # Reload systemd daemon to apply changes
     systemctl daemon-reload
 
-    # Clean up password variable
-    unset nas_password
+    sleep 1
+    return
 }
 
 # Set up LUKS encryption on a block device
 setup_luks_encryption() {
-    echo -e "This script will set up LUKS encryption on a block device."
-    echo -e "Please ensure you have backups of your data before proceeding.\n"
-
-    # List block devices and store the output in a variable
+    echo -e "${GREEN}Setting up LUKS encryption on a block device...${NC}"
     lsblk_output=$(lsblk -o +FSTYPE)
 
     echo -e "\nAvailable block devices:"
     echo "$lsblk_output"
 
-    # Prompt for the device path
     read -p "Enter the LUKS device path (e.g., /dev/nvme0n1p3): " device_path
 
-    # Validate the device path
     if [[ ! -b $device_path ]]; then
         echo -e "${RED}Error:${NC} Invalid device path. Please enter a valid block device path (e.g., /dev/nvme0n1p3)." >&2
         exit 1
     fi
-
-    # Extract the device name from the path (e.g., 'nvme0n1p3' from '/dev/nvme0n1p3')
+	
+	# Extract the device name from the path (e.g., 'nvme0n1p3' from '/dev/nvme0n1p3')
     device_name=$(basename $device_path)
 
-    # Securely create the directory for LUKS
+	# Securely create the directory for LUKS
     mkdir -p /etc/luks
     chmod 700 /etc/luks
 
-    # Securely create the key file and set permissions
+	# Securely create the key file and set permissions
     touch /etc/luks/system.key
     chmod 400 /etc/luks/system.key
     dd if=/dev/urandom of=/etc/luks/system.key bs=4096 count=1 iflag=fullblock
 
-    # Verify the key file
+	# Verify the key file
     echo -e "\nKey file created:"
     ls -l /etc/luks/system.key
 
-    # Add the key to the LUKS device
+	# Add the key to the LUKS device
     cryptsetup luksAddKey "$device_path" /etc/luks/system.key
 
-    # Install cryptsetup for initramfs
-    apt install -y cryptsetup-initramfs
+	# Install cryptsetup for initramfs
+    apt-get install -y cryptsetup-initramfs
 
-    # Configure the keyfile pattern
+	# Configure the keyfile pattern
     echo 'KEYFILE_PATTERN="/etc/luks/*.key"' | tee -a /etc/cryptsetup-initramfs/conf-hook > /dev/null
-
-    # Set UMASK in initramfs.conf
+	
+	# Set UMASK in initramfs.conf
     echo 'UMASK=0077' | tee -a /etc/initramfs-tools/initramfs.conf > /dev/null
 
-    # Clear existing entries in crypttab
+	# Clear existing entries in crypttab
     truncate --size 0 /etc/crypttab
-
-    # Add entry to crypttab
+	
+	# Add entry to crypttab
     uuid=$(blkid -s UUID -o value $device_path)
     echo "${device_name}_crypt UUID=$uuid /etc/luks/system.key luks" | tee -a /etc/crypttab > /dev/null
 
-    # Update initramfs
+	# Update initramfs
     update-initramfs -u -k all > /dev/null
 
-    echo -e "\n${GREEN}LUKS encryption setup complete.${NC}"
+    echo -e "${GREEN}LUKS encryption setup complete.${NC}"
+    sleep 1
+    return
 }
 
 # Perform all actions for Ubuntu
@@ -230,7 +251,6 @@ perform_all_actions_ubuntu() {
     remove_regenerate_machine_ids
     remove_ssh_keys_reconfigure_openssh
     change_hostname
-    add_user
     reboot_system
 }
 
@@ -294,12 +314,6 @@ main_menu() {
         read -s -n 1
     done
 }
-
-# Run the main menu
-main_menu
-
-echo "Action complete."
-
 
 # Run the main menu
 main_menu
