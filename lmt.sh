@@ -157,7 +157,7 @@ mount_nas_share() {
     read -p "Enter the NAS share name: " share_name
     read -p "Enter the NAS username: " nas_username
     nas_password=$(get_nas_password)
-
+    echo
     read -p "Enter the mount point or press Enter to use the default (/mnt/data_nas): " mount_point
     mount_point=${mount_point:-/mnt/data_nas}
 
