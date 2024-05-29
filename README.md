@@ -5,17 +5,14 @@ This script provides a comprehensive menu-driven interface for performing essent
 ## Usage
 
 1. Run the script as the root user:
+ 
    ```bash
-   sudo bash lmt.sh
+   sudo bash -c "$(wget -qLO - https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh)"
    ```
    ```bash
-   bash -c "$(wget -qLO - https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh)"
+   sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh)"
    ```
-   ```bash
-   curl -fsSL https://raw.githubusercontent.com/Fa-r27-aD/LinuxMegaTools/main/lmt.sh
-   chmod +x lmt.sh
-   ./lmt.sh
-   ```
+   
 2. Follow the on-screen instructions to select and execute actions.
 
 ## Options
