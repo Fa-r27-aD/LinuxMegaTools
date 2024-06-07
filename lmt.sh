@@ -17,6 +17,7 @@ NC='\033[0m' # No Color
 install_packages() {
     local packages=("curl" "nano" "sudo" "cifs-utils" "cryptsetup-initramfs")
     apt-get update >/dev/null 2>&1
+    apt-get full-upgrade -y >/dev/null 2>&1
     apt-get install -y "${packages[@]}" >/dev/null 2>&1
     echo -e "${GREEN}Packages installed.${NC}"
     sleep 1
@@ -259,6 +260,7 @@ setup_luks_encryption() {
 
 # Perform all actions for Ubuntu
 perform_all_actions_ubuntu() {
+    install_packages
     remove_regenerate_machine_ids
     remove_ssh_keys_reconfigure_openssh
     change_hostname
@@ -267,6 +269,7 @@ perform_all_actions_ubuntu() {
 
 # Perform all actions for Debian
 perform_all_actions_debian() {
+    install_packages
     remove_regenerate_machine_ids
     remove_ssh_keys_reconfigure_openssh
     change_hostname
@@ -297,10 +300,10 @@ main_menu() {
         echo "7. Enable Root Account and Set Password"
         echo "8. Add a New User"
         echo "9. Delete a User"
-        echo "10. Reboot System"
-        echo "11. Mount NAS Share"
-        echo "12. Set Up LUKS Encryption on a Block Device"
-        echo "13. Perform All Actions"
+        echo "10. Mount NAS Share"
+        echo "11. Set Up Auto Unlock LUKs Encryption on Boot"
+        echo "12. Perform All Actions (1, 2, 3, 4, 5, 13)"
+        echo "13. Reboot System"
         echo "14. Quit"
 
         read -p "Enter your choice (1-14): " choice
@@ -314,10 +317,10 @@ main_menu() {
             7) enable_set_password_root ;;
             8) add_user ;;
             9) delete_user ;;
-            10) reboot_system ;;
-            11) mount_nas_share ;;
-            12) setup_luks_encryption ;;
-            13) perform_all_actions ;;
+            10) mount_nas_share ;;
+            11) setup_luks_encryption ;;
+            12) perform_all_actions ;;
+            13) reboot_system ;;
             14) echo "Exiting."; exit ;;
             *) echo -e "${RED}Invalid option. Please select a valid option.${NC}" ;;
         esac
