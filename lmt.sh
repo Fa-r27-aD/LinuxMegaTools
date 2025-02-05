@@ -232,7 +232,7 @@ setup_luks_encryption() {
     ls -l /etc/luks/system.key
 
     # Add the key to the LUKS device
-    cryptsetup luksAddKey "$device_path" /etc/luks/system.key
+    /sbin/cryptsetup luksAddKey "$device_path" /etc/luks/system.key
 
     # Install cryptsetup for initramfs
     apt-get install -y cryptsetup-initramfs
