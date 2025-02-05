@@ -247,7 +247,7 @@ setup_luks_encryption() {
     truncate --size 0 /etc/crypttab
 	
     # Add entry to crypttab
-    uuid=$(blkid -s UUID -o value $device_path)
+    uuid=$(/sbin/blkid -s UUID -o value $device_path)
     echo "${device_name} UUID=$uuid /etc/luks/system.key luks" | tee -a /etc/crypttab > /dev/null
 
 	# Update initramfs
